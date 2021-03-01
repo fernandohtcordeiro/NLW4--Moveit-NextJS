@@ -2,8 +2,8 @@
 
 Este é um projeto [Next.js](https://nextjs.org/) a qual foi inicializado com [create-next-app](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Começando
-Primeiro, execute o servidor de desenvolvimento:
+Para começar,
+execute primeiro o servidor de desenvolvimento:
 
 npm run dev
  # ou 
