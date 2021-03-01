@@ -1,5 +1,4 @@
 # NLW4-Moveit-NextJS
-Temporizador de  tarefas com metodologia  de tempo pomodoro( A Técnica Pomodoro é um método de gerenciamento de tempo desenvolvido por Francesco Cirillo no final dos anos 1980. A técnica consiste na utilização de um cronômetro para dividir o trabalho em períodos de 25 minutos, separados por breves intervalos.) Para aprimorar mais a técnica  desenvolvemos juntamente com a equipe Rocketseat alguns desafios a qual o usuário tem que completar no final do tempo.
 
 Este é um projeto Next.js com o qual foi inicializado create-next-app.
 
@@ -17,7 +16,7 @@ As rotas de API podem ser acessadas em http: // localhost: 3000 / api / hello . 
 
 O pages/apidiretório é mapeado para /api/*. Os arquivos neste diretório são tratados como rotas de API em vez de páginas React.
 
-Saber mais
+# Saber mais
 Para saber mais sobre Next.js, dê uma olhada nos seguintes recursos:
 
 Documentação Next.js - aprenda sobre os recursos e API Next.js.
