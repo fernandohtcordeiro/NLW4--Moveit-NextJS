@@ -1,68 +1,55 @@
 import Head from 'next/head';
-import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 
-import { CompletedChallenges } from "../components/CompletedChallenges";
-import { ExperienceBar } from "../components/ExperienceBar";
-import { Countdown } from "../components/Countdown";
-import { Profile } from "../components/Profile";
-import {ChallengeBox} from "../components/ChallengeBox";
+import Input from '../components/Input';
 
+import styles from '../styles/pages/Home.module.css';
 
-import styles from '../styles/Pages/Home.module.css';
-import { CountdownProvider } from '../contexts/CountdownContext';
-import { ChallengesProvider } from '../contexts/ChallengesContext';
+export default function Home() {
+  const { push } = useRouter();
+  const [username, setUsername] = useState('');
 
-interface HomeProps {
-  level: number;
-  currentExperience: number;
-  challengesCompleted: number;
-}
-
-export default function Home(props) {
-  
-  return (
-  <ChallengesProvider 
-  level={props.level} 
-  currentExperience={props.currentExperience}
-  challengesCompleted={props.challengesCompleted}
-  >
-  <div className={styles.container}>
-     <Head>
-       <title>Início | move.it </title>
-     </Head>
-
-      <ExperienceBar />
-    <CountdownProvider>
-    <section>
-      <div>
-        <Profile />
-        <CompletedChallenges />
-        <Countdown /> 
-      </div>
-      <div>
-       <ChallengeBox />
-      </div>
-    </section>
-    </CountdownProvider>
-  </div>
-  </ChallengesProvider>
-  )
-  
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  
-
-  const { level, currentExperience, challengesCompleted } = ctx.req.cookies;
-
-  
-
-  return {
-    props: {
-      level: Number(level),
-      currentExperience: Number(currentExperience),
-      challengesCompleted: Number(challengesCompleted)
+  const handleSubmit = (e: React.SyntheticEvent): void => {
+    e.preventDefault();
+    if (username) {
+      push(`/${username}`);
     }
   }
 
+  return (
+    <div className={styles.homeContainer}>
+      <Head>
+        <title>Início | move.it</title>
+      </Head>
+
+      <section>
+        <div className={styles.homeBackground} />
+
+        <div className={styles.homeContent}>
+          <div>
+            <img src="/logo-full-white.svg" alt="Move it logo" />
+          </div>
+
+          <h1>Bem-vindo</h1>
+          <div className={styles.homeInformation}>
+            <img src="/github-logo.svg" alt="Github logo" />
+            <span>Faça login com seu Github para começar</span>
+          </div>
+
+          <div>
+            <form onSubmit={handleSubmit}>
+              <Input
+                placeholder="Digite seu username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </form>
+          </div>
+        </div>
+      </section>
+
+
+    </div>
+  )
 }

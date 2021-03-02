@@ -1,26 +1,25 @@
-import { createContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useState, ReactNode, useEffect, useContext } from 'react';
 import Cookies from 'js-cookie';
 import challenges from '../../challenges.json';
 import { LevelUpModal } from '../components/LevelUpModal';
 
-
 interface Challenge {
-  type: 'body'| 'eye';
+  type: 'body' | 'eye';
   description: string;
   amount: number;
 }
 
-interface ChallengesContextData {
+interface ChallengeContextData {
+  experienceToNextLevel: number;
   level: number;
-  currentExperience: number;
-  experienceToNextLevel:number;
-  challengesCompleted: number;
-  activeChallenge: Challenge;
+  currentExperience: number,
+  challengesCompleted: number,
+  activeChallenge: Challenge,
   levelUp: () => void;
   startNewChallenge: () => void;
-  resetChallenge: () => void; 
+  resetChallenge: () => void;
   completeChallenge: () => void;
-  closeLevelUpModal: () => void;     
+  closeLevelUpModal: () => void;
 }
 
 interface ChallengesProviderProps {
@@ -30,65 +29,64 @@ interface ChallengesProviderProps {
   challengesCompleted: number;
 }
 
+export const ChallengesContext = createContext({} as ChallengeContextData);
 
-export const ChallengesContext = createContext({} as ChallengesContextData);
-
-export function ChallengesProvider({ 
+export function ChallengeProvider({
   children,
-  ...rest 
-
-}:ChallengesProviderProps) {
+  ...rest
+}: ChallengesProviderProps) {
   const [level, setLevel] = useState(rest.level ?? 1);
-  const [currentExperience, setCurrentExperience] = useState(rest.currentExperience ?? 0);
-  const [challengesCompleted, setChallengesCompleted] = useState(rest.challengesCompleted ?? 0);
+  const [currentExperience, setCurrentExperience] = useState(
+    rest.currentExperience ?? 0
+  );
+  const [challengesCompleted, setChallengesCompleted] = useState(
+    rest.challengesCompleted ?? 0
+  );
+  const [activeChallenge, setActiveChallenge] = useState(null);
+  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
 
-  const [activeChallenge, setActiveChallenge] = useState(null)
-  const [islevelUpModalOpen, setIsLevelUpModalOpen] = useState(false)
+  const experienceToNextLevel = Math.pow((level + 1) * 4, 2);
 
- const experienceToNextLevel = Math.pow((level + 1) * 4, 2)
+  useEffect(() => {
+    Notification.requestPermission();
+  }, []);
 
-useEffect(() => {
-  Notification.requestPermission();
-}, [])
-
-useEffect(() => {
-  Cookies.set('level', String(level));
-  Cookies.set('currentExperience', String(currentExperience));
-  Cookies.set('challengesCompleted', String(challengesCompleted));
-}, [level, currentExperience, challengesCompleted]);
-
-
+  useEffect(() => {
+    Cookies.set('level', String(level));
+    Cookies.set('currentExperience', String(currentExperience));
+    Cookies.set('challengesCompleted', String(challengesCompleted));
+  }, [level, currentExperience, challengesCompleted]);
 
   function levelUp() {
-   setLevel(level + 1);
-   setIsLevelUpModalOpen(true)
+    setLevel(level + 1);
+    setIsLevelUpModalOpen(true);
   }
 
   function closeLevelUpModal() {
     setIsLevelUpModalOpen(false);
   }
-  
- function startNewChallenge() {
-   const randomChallengeIndex = Math.floor(Math.random() * challenges.length)
-   const challenge = challenges[randomChallengeIndex];
 
-   setActiveChallenge(challenge)
+  function startNewChallenge() {
+    const randomChallengeIndex = Math.floor(Math.random() * challenges.length);
+    const challenge = challenges[randomChallengeIndex];
 
-   new Audio('/notification.mp3').play();
+    setActiveChallenge(challenge);
 
-   if (Notification.permission == 'granted') {
-     new Notification('Novo desafio ',{
-       body: `Valendo ${challenge.amount}xp!`
-     })
-   }
- }
+    new Audio('/notification.mp3').play();
 
- function resetChallenge() {
-   setActiveChallenge(null);
- }
+    if (Notification.permission === 'granted') {
+      new Notification('Novo desafio 🎉', {
+        body: `Valendo ${challenge.amount}xp!`
+      })
+    }
+  }
 
- function completeChallenge() {
-    if(!activeChallenge){
+  function resetChallenge() {
+    setActiveChallenge(null);
+  }
+
+  function completeChallenge() {
+    if (!activeChallenge) {
       return;
     }
 
@@ -101,28 +99,39 @@ useEffect(() => {
       levelUp();
     }
 
-   setCurrentExperience(finalExperience);
-   setActiveChallenge(null); 
-   setChallengesCompleted(challengesCompleted + 1);
- }
-  return (
-    <ChallengesContext.Provider 
-    value={{ 
-      level, 
-      currentExperience, 
-      challengesCompleted, 
-      experienceToNextLevel,
-      levelUp,
-      startNewChallenge,
-      activeChallenge,
-      resetChallenge,
-      completeChallenge,
-      closeLevelUpModal
-    }}
-      >
-     {children}
+    setCurrentExperience(finalExperience);
+    setActiveChallenge(null);
+    setChallengesCompleted(challengesCompleted + 1);
+  }
 
-     { islevelUpModalOpen && <LevelUpModal />}
+  return (
+    <ChallengesContext.Provider
+      value={{
+        experienceToNextLevel,
+        level,
+        currentExperience,
+        challengesCompleted,
+        activeChallenge,
+        levelUp,
+        startNewChallenge,
+        resetChallenge,
+        completeChallenge,
+        closeLevelUpModal
+      }}
+    >
+      {children}
+
+      {isLevelUpModalOpen && <LevelUpModal />}
     </ChallengesContext.Provider>
   );
+}
+
+export function useChallenge(): ChallengeContextData {
+  const context = useContext(ChallengesContext);
+
+  if (!context) {
+    throw new Error('useChallenge must be used within a ChallengeProvider');
+  }
+
+  return context;
 }

@@ -1,0 +1,41 @@
+.inputContainer {
+  display: flex;
+  align-items: center;
+}
+
+.inputContainer input {
+  border: 0;
+  background:var(--white);
+  font-size: 1.25rem;
+  padding: 1.65rem;
+  color: var(--darkbody);
+  outline: none;
+
+  border-radius: 5px 0px 0px 5px;
+}
+
+.inputContainer input::placeholder {
+  color: var(--darkbody);
+  opacity: 0.7;
+}
+
+.inputContainer button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  background: var(--blue-dark);
+
+  padding: 1.66rem;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  transition: all 0.2s;
+}
+
+.inputContainer button:hover {
+  transform: scale(1.03);
+}
+
+.inputContainer button:active {
+  transform: scale(0.98);
+}
