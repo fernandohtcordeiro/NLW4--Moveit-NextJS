@@ -1,6 +1,6 @@
 import '../styles/global.css'
 
-import { ChallengesContext, ChallengesProvider } from '../contexts/ChallengesContext'
+import { ChallengesContext, ChallengeProvider } from '../contexts/ChallengesContext'
 import React, { useState } from 'react';
 
 
